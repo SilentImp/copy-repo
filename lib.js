@@ -9,7 +9,7 @@ const { Octokit } = require('octokit');
  * @param {string} description - description we add to repository
  */
 
-const copyRepo = async ({
+const copyRepoTo = async ({
   token,
   templateOwner,
   templateRepo,
@@ -33,5 +33,5 @@ const copyRepo = async ({
 };
 
 module.exports = {
-  copyRepo
+  copyRepoTo
 };

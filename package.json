@@ -1,17 +1,17 @@
 {
-  "name": "copy-repo",
-  "version": "0.1.0",
+  "name": "copy-repo-to",
+  "version": "0.2.0",
   "description": "Copy repo marked as a template to new owner",
   "main": "lib.js",
   "bin": {
-    "copy-repo": "index.js"
+    "copy-repo-to": "index.js"
   },
   "scripts": {
     "patch": "npm version patch && npm publish && git push --follow-tags",
     "minor": "npm version minor && npm publish && git push --follow-tags",
     "major": "npm version major && npm publish && git push --follow-tags"
   },
-  "repository": "https://github.com/SilentImp/copy-repo",
+  "repository": "https://github.com/SilentImp/copy-repo-to",
   "keywords": [],
   "files": [
     "index.js",

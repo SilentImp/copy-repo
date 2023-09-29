@@ -2,7 +2,7 @@
 
 const { program } = require('commander');
 const packageJSON = require("./package.json");
-const { copyRepo } = require('./lib');
+const { copyRepoTo } = require('./lib');
 
 program
   .name(packageJSON.name)
@@ -23,7 +23,7 @@ program
     } = options;
     try {
 
-      await copyRepo({
+      await copyRepoTo({
         token,
         templateOwner,
         templateRepo,
