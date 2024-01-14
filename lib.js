@@ -25,15 +25,17 @@ const copyRepoTo = async ({
   const { data: {
     html_url,
     description: repoDescription,
-  } } = await await octokit.request(`GET /repos/${owner}/${templateRepo}`, {
-    owner,
-    name: templateRepo,
+  } } = await await octokit.request(`GET /repos/${templateOwner}/${templateRepo}`, {
+    owner: templateOwner,
+    repo: templateRepo,
     headers: {
         'X-GitHub-Api-Version': '2022-11-28'
     }
   });
 
   await octokit.request(`POST /repos/${templateOwner}/${templateRepo}/generate`, {
+    template_owner: templateOwner,
+    template_repo: templateRepo,
     owner,
     name: templateRepo,
     description: description ?? repoDescription,
@@ -73,7 +75,7 @@ const copyRepoTo = async ({
 
   const {data} = await octokit.request(`POST /repos/${owner}/${templateRepo}/pages`, {
     owner,
-    name: templateRepo,
+    repo: templateRepo,
     source: {
       branch: 'main',
       path: '/'
@@ -85,7 +87,7 @@ const copyRepoTo = async ({
 
   const { data: { html_url: GitHubPagesBaseURL}} = await octokit.request(`GET /repos/${owner}/${templateRepo}/pages`, {
     owner,
-    name: templateRepo,
+    repo: templateRepo,
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
@@ -112,8 +114,9 @@ const copyRepoTo = async ({
   await octokit.request(`PATCH /repos/${owner}/${templateRepo}`, {
     owner,
     repo: templateRepo,
+    name: templateRepo,
     is_template: false,
-    homepage: GitHubPagesURL,
+    homepage: newRepoURL,
     headers: {
         'X-GitHub-Api-Version': '2022-11-28'
     }
