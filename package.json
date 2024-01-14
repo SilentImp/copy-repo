@@ -1,6 +1,6 @@
 {
   "name": "copy-repo-to",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Copy repo marked as a template to new owner",
   "main": "lib.js",
   "bin": {
