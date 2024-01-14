@@ -16,20 +16,63 @@ const copyRepoTo = async ({
   owner,
   description,
 }) => {
+
   const octokit = new Octokit({
     auth: token,
+  });
+
+  const { data: {
+    html_url,
+    description: repoDescription,
+  } } = await await octokit.request(`GET /repos/${owner}/${templateRepo}`, {
+    owner,
+    name: templateRepo,
+    headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+    }
   });
 
   await octokit.request(`POST /repos/${templateOwner}/${templateRepo}/generate`, {
     owner,
     name: templateRepo,
-    description,
+    description: description ?? repoDescription,
+    homepage: html_url,
     include_all_branches: false,
     private: false,
     headers: {
         'X-GitHub-Api-Version': '2022-11-28'
     }
   });
+
+  await octokit.request(`POST /repos/${owner}/${templateRepo}/pages`, {
+    owner,
+    name: templateRepo,
+    source: {
+      branch: 'main',
+      path: '/'
+    },
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  });
+
+  const { html_url: newRepoURL } = await octokit.request(`GET /repos/${owner}/${templateRepo}/pages`, {
+    owner,
+    name: templateRepo,
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  })
+
+  await octokit.request(`PATCH /repos/${owner}/${templateRepo}`, {
+    owner,
+    name: templateRepo,
+    homepage: newRepoURL,
+    headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+    }
+  });
+
 };
 
 module.exports = {
