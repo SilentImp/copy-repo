@@ -23,7 +23,6 @@ const copyRepoTo = async ({
   });
 
   const { data: {
-    html_url,
     description: repoDescription,
   } } = await await octokit.request(`GET /repos/${templateOwner}/${templateRepo}`, {
     owner: templateOwner,
@@ -34,8 +33,6 @@ const copyRepoTo = async ({
   });
 
   await octokit.request(`POST /repos/${templateOwner}/${templateRepo}/generate`, {
-    template_owner: templateOwner,
-    template_repo: templateRepo,
     owner,
     name: templateRepo,
     description: description ?? repoDescription,
@@ -73,7 +70,7 @@ const copyRepoTo = async ({
 
   await waitForBranch();
 
-  const {data} = await octokit.request(`POST /repos/${owner}/${templateRepo}/pages`, {
+  await octokit.request(`POST /repos/${owner}/${templateRepo}/pages`, {
     owner,
     repo: templateRepo,
     source: {
@@ -93,6 +90,8 @@ const copyRepoTo = async ({
     }
   });
 
+  // Getting file list in the repo to check if we have single .html file, which is not index.html
+  // If it's the case, we should add it into the GitHub pages link
   const {data: filesList} = await octokit.request(`GET /repos/${owner}/${templateRepo}/contents/`, {
     owner,
     repo: templateRepo,
@@ -111,12 +110,13 @@ const copyRepoTo = async ({
   const hasIndex = fileNamesList.find((name)=>(name === 'index.html')) !== undefined;
   const GitHubPagesURL = (hasHTML && !hasIndex && hasSingleHTML) ? `${GitHubPagesBaseURL}${fileNamesList[0]}`: GitHubPagesBaseURL;
 
+  // Updating link to GitHub pages
   await octokit.request(`PATCH /repos/${owner}/${templateRepo}`, {
     owner,
     repo: templateRepo,
     name: templateRepo,
     is_template: false,
-    homepage: newRepoURL,
+    homepage: GitHubPagesURL,
     headers: {
         'X-GitHub-Api-Version': '2022-11-28'
     }
